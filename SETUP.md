@@ -37,13 +37,28 @@ PowerShell -ExecutionPolicy Bypass -File .\bin\doctor.ps1
 
 `setup.ps1` creates `%LOCALAPPDATA%\venvs\data-analysis-v1`, installs the pinned
 public packages, and creates a local `.env` from `.env.example` if needed. It never
-overwrites an existing `.env`. The doctor reports readiness without printing any
-credential values.
+overwrites an existing `.env`. Python bytecode and common library caches are also
+redirected to `%LOCALAPPDATA%\data-analysis-v1\cache`, keeping the cloned or synced
+repository lean. The doctor reports readiness without printing credential values.
 
 After setup, run all Python commands through the repository launcher:
 
 ```powershell
 .\bin\python.ps1 --version
+```
+
+If a tool was previously run outside the launcher, remove its disposable caches
+without touching session outputs or local configuration:
+
+```powershell
+.\bin\clean.ps1
+```
+
+If someone accidentally created `.venv` inside the repository, first verify that
+the external environment is working and then remove the local copy explicitly:
+
+```powershell
+.\bin\clean.ps1 -RemoveLocalVenv
 ```
 
 ## 2. Configure only the data sources you are authorized to use

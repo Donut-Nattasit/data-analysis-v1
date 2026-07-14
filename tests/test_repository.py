@@ -40,6 +40,7 @@ class RepositoryChecks(unittest.TestCase):
             ROOT / ".github" / "copilot-instructions.md",
             ROOT / ".cursor" / "rules" / "project.mdc",
             ROOT / "SETUP.md",
+            ROOT / "bin" / "clean.ps1",
             ROOT / "bin" / "doctor.ps1",
         ]
         self.assertEqual([], [str(path.relative_to(ROOT)) for path in required if not path.is_file()])
@@ -138,6 +139,35 @@ class RepositoryChecks(unittest.TestCase):
         optional = (ROOT / "requirements-ceic.txt").read_text(encoding="utf-8").lower()
         self.assertNotIn("ceic-api-client", core)
         self.assertIn("ceic-api-client", optional)
+
+    def test_python_launcher_keeps_caches_outside_repository(self) -> None:
+        launcher = (ROOT / "bin" / "python.ps1").read_text(encoding="utf-8")
+        self.assertIn("PYTHONPYCACHEPREFIX", launcher)
+        self.assertIn("MPLCONFIGDIR", launcher)
+        self.assertIn("NUMBA_CACHE_DIR", launcher)
+        self.assertIn("LOCALAPPDATA", launcher)
+
+    def test_generated_artifacts_are_ignored(self) -> None:
+        ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+        required_patterns = {
+            ".venv/",
+            "__pycache__/",
+            "*.pyc",
+            ".pytest_cache/",
+            ".mypy_cache/",
+            ".ruff_cache/",
+            ".ipynb_checkpoints/",
+            "build/",
+            "dist/",
+            "*.egg-info/",
+        }
+        self.assertEqual(set(), required_patterns.difference(ignore.splitlines()))
+
+    def test_setup_uses_external_environment_and_cleanup(self) -> None:
+        setup = (ROOT / "setup.ps1").read_text(encoding="utf-8")
+        self.assertIn("LOCALAPPDATA", setup)
+        self.assertIn("bin\\clean.ps1", setup)
+        self.assertNotIn("-m venv $ProjectRoot", setup)
 
 
 if __name__ == "__main__":

@@ -10,6 +10,8 @@ permissions:
 jobs:
   check:
     runs-on: windows-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Check out repository
         uses: actions/checkout@v7

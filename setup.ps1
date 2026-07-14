@@ -6,16 +6,19 @@
 #   %LOCALAPPDATA%\venvs\data-analysis-v1
 #
 # Usage:
-#   .\setup.ps1          # create or update the environment
-#   .\setup.ps1 -Force   # delete and rebuild only that external environment
+#   .\setup.ps1                  # create or update the environment
+#   .\setup.ps1 -Force           # delete and rebuild only the external environment
+#   .\setup.ps1 -RemoveLocalVenv # also remove an accidental repository .venv
 
 param(
-    [switch]$Force
+    [switch]$Force,
+    [switch]$RemoveLocalVenv
 )
 
 $ErrorActionPreference = 'Stop'
 $ProjectRoot = $PSScriptRoot
-$VenvDir = Join-Path $env:LOCALAPPDATA 'venvs\data-analysis-v1'
+$ExpectedVenvDir = Join-Path $env:LOCALAPPDATA 'venvs\data-analysis-v1'
+$VenvDir = [System.IO.Path]::GetFullPath($ExpectedVenvDir)
 $VenvPython = Join-Path $VenvDir 'Scripts\python.exe'
 
 # 1. Find Python 3.12 without constructing a shell command string.
@@ -53,6 +56,9 @@ Write-Host "Using Python: $PythonCommand $($PythonArgs -join ' ') ($PythonVersio
 
 # 2. Rebuild the dedicated external environment only when explicitly requested.
 if ($Force -and (Test-Path -LiteralPath $VenvDir)) {
+    if ($VenvDir -ne [System.IO.Path]::GetFullPath($ExpectedVenvDir)) {
+        Write-Error 'External virtual-environment path verification failed.'
+    }
     Write-Host "Removing external environment at $VenvDir ..."
     Remove-Item -LiteralPath $VenvDir -Recurse -Force
 }
@@ -72,9 +78,9 @@ if (-not (Test-Path -LiteralPath $VenvPython)) {
     Write-Host "Using existing virtual environment at $VenvDir"
 }
 
-# An in-repository environment is ignored but never deleted automatically.
+# An in-repository environment is ignored and removed only when explicitly requested.
 $LocalVenv = Join-Path $ProjectRoot '.venv'
-if (Test-Path -LiteralPath $LocalVenv) {
+if ((Test-Path -LiteralPath $LocalVenv) -and -not $RemoveLocalVenv) {
     Write-Warning "An in-repository .venv exists at $LocalVenv. The external environment at $VenvDir is preferred."
 }
 
@@ -121,6 +127,14 @@ if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot 'bin\x13as.exe'))) {
 
 & $VenvPython -m pip check
 if ($LASTEXITCODE -ne 0) { Write-Error 'Installed dependency validation failed.' }
+
+# Remove safe tool caches left by direct Python/test commands. Conversation
+# outputs, credentials, downloaded data, and licensed files are never touched.
+Write-Host ''
+Write-Host 'Cleaning disposable repository caches...'
+$CleanArgs = @()
+if ($RemoveLocalVenv) { $CleanArgs += '-RemoveLocalVenv' }
+& (Join-Path $ProjectRoot 'bin\clean.ps1') @CleanArgs
 
 Write-Host ''
 Write-Host 'Core Python setup is ready.' -ForegroundColor Green

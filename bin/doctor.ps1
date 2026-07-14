@@ -56,6 +56,28 @@ if ($PythonReady) {
 $PackagesDetail = if ($PackagesReady) { 'Required public Python packages import successfully.' } else { 'Run .\setup.ps1 to install the pinned public packages.' }
 Add-Check 'Core Python packages' $PackagesReady $PackagesDetail $true
 
+$GeneratedDirectoryNames = @('__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache', '.hypothesis', '.ipynb_checkpoints', 'htmlcov', '.tox', '.nox')
+$GeneratedFileNames = @('.coverage', 'coverage.xml')
+$GeneratedItems = @(Get-ChildItem -LiteralPath $ProjectRoot -File -Force | Where-Object {
+    $_.Extension -in @('.pyc', '.pyo') -or $_.Name -in $GeneratedFileNames
+})
+$SearchRoots = Get-ChildItem -LiteralPath $ProjectRoot -Directory -Force | Where-Object {
+    $_.Name -notin @('.git', 'session', '.venv')
+}
+foreach ($Root in $SearchRoots) {
+    if ($Root.Name -in $GeneratedDirectoryNames) { $GeneratedItems += $Root }
+    $GeneratedItems += Get-ChildItem -LiteralPath $Root.FullName -Directory -Recurse -Force -ErrorAction SilentlyContinue | Where-Object {
+        $_.Name -in $GeneratedDirectoryNames
+    }
+    $GeneratedItems += Get-ChildItem -LiteralPath $Root.FullName -File -Recurse -Force -ErrorAction SilentlyContinue | Where-Object {
+        $_.Extension -in @('.pyc', '.pyo') -or $_.Name -in $GeneratedFileNames
+    }
+}
+$LocalVenvExists = Test-Path -LiteralPath (Join-Path $ProjectRoot '.venv')
+$RepositoryClean = $GeneratedItems.Count -eq 0 -and -not $LocalVenvExists
+$CleanDetail = if ($RepositoryClean) { 'Tool caches are external and no in-repository .venv was found.' } else { 'Run .\bin\clean.ps1; add -RemoveLocalVenv if an in-repository .venv exists.' }
+Add-Check 'Lean repository layout' $RepositoryClean $CleanDetail $false
+
 $RootEnv = Join-Path $ProjectRoot '.env'
 $ParentEnv = Join-Path (Split-Path -Parent $ProjectRoot) '.env'
 $EnvPath = if (Test-Path -LiteralPath $RootEnv) { $RootEnv } elseif (Test-Path -LiteralPath $ParentEnv) { $ParentEnv } else { $RootEnv }

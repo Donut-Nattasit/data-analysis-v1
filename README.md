@@ -41,7 +41,10 @@ PowerShell -ExecutionPolicy Bypass -File .\bin\doctor.ps1
 `%LOCALAPPDATA%\venvs\data-analysis-v1`, outside the repository, and installs the
 public dependencies in `requirements.txt`. If `.env` does not exist, it also copies
 the safe placeholder template. It does not change the user's global `PYTHONPATH` or
-delete an existing in-repository environment.
+delete an existing in-repository environment unless `-RemoveLocalVenv` is supplied.
+The launcher stores Python, Matplotlib, Numba, and joblib caches under
+`%LOCALAPPDATA%\data-analysis-v1\cache`, so normal work does not fill the repository
+or its OneDrive folder with generated files.
 
 Fetch scripts prefer `.env` in the repository root. For compatibility with related
 internal projects, they also check for `.env` one directory above the repository.
@@ -71,6 +74,7 @@ These files are intentionally excluded from Git. See `THIRD_PARTY_NOTICES.md`.
 - `AGENTS.md` — canonical instructions for every AI assistant.
 - `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, `.cursor/rules/` — small compatibility adapters.
 - `bin/python.ps1` — the project-aware Python launcher.
+- `bin/clean.ps1` — removes disposable tool caches; session work is never touched.
 - `bin/doctor.ps1` — safe readiness report that never prints secret values.
 - `setup.ps1` — reproducible Windows environment setup.
 - `tests/` — fast, credential-free repository checks.
