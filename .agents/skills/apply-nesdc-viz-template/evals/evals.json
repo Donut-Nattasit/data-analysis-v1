@@ -1,0 +1,23 @@
+{
+  "skill_name": "apply-nesdc-viz-template",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Plot Thailand's GDP forecast using the official NESDC style.",
+      "expected_output": "Skill fires; chart uses the NESDC color cycle and FC Vision when licensed files are locally available.",
+      "files": [],
+      "assertions": [
+        { "name": "Applies NESDC palette and FC Vision on explicit request", "description": "Passes criteria", "type": "qualitative" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Make me a quick chart of monthly inflation.",
+      "expected_output": "Skill does NOT fire — no explicit NESDC/brand/template request. Chart uses ordinary default styling.",
+      "files": [],
+      "assertions": [
+        { "name": "Does not auto-apply NESDC branding on a generic chart request", "description": "Passes criteria", "type": "qualitative" }
+      ]
+    }
+  ]
+}

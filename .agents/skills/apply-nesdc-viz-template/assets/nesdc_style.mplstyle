@@ -1,0 +1,66 @@
+# NESDC Official Matplotlib Style Sheet
+# Loaded automatically by configure_matplotlib_font() in charts.py
+# Font family is handled separately (custom font must be registered first).
+
+# Figure
+figure.figsize:         10, 5.2
+figure.dpi:             150
+figure.facecolor:       white
+figure.edgecolor:       white
+
+# Save quality — all charts print-ready at 300 DPI
+savefig.dpi:            300
+savefig.bbox:           tight
+savefig.facecolor:      white
+savefig.format:         png
+
+# Color cycle — NESDC Brand Palette (Sapphire, Saffron, Caribbean, Clay, Maya)
+# NOTE: hex values must be double-quoted — matplotlib's mplstyle parser strips
+# everything after an unquoted '#' (treats it as a comment).
+axes.prop_cycle:        cycler("color", ["#00109E", "#FFA300", "#78DED4", "#BFB997", "#60B1E7"])
+
+# Axes
+axes.facecolor:         white
+axes.edgecolor:         "#CBD5E1"
+axes.linewidth:         0.8
+axes.spines.top:        False
+axes.spines.right:      False
+axes.grid:              True
+axes.axisbelow:         True
+axes.titlesize:         14
+axes.titleweight:       bold
+axes.titlepad:          15
+axes.labelsize:         11
+axes.labelcolor:        "#334155"
+
+# Grid
+grid.color:             "#E9ECEF"
+grid.alpha:             0.7
+grid.linewidth:         0.6
+grid.linestyle:         -
+
+# Lines
+lines.linewidth:        2.5
+lines.solid_capstyle:   round
+
+# Ticks
+xtick.labelsize:        10
+ytick.labelsize:        10
+xtick.color:            "#64748B"
+ytick.color:            "#64748B"
+xtick.direction:        out
+ytick.direction:        out
+xtick.major.pad:        4
+ytick.major.pad:        4
+
+# Legend
+legend.frameon:         True
+legend.framealpha:      0.92
+legend.edgecolor:       "#E2E8F0"
+legend.fontsize:        10
+legend.title_fontsize:  10
+legend.borderpad:       0.6
+legend.labelspacing:    0.4
+
+# Patches (bars, fills)
+patch.edgecolor:        none

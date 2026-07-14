@@ -1,0 +1,46 @@
+# Private keys and local configuration
+.env
+
+# Per-user AI-assistant overrides (machine-specific)
+.claude/settings.local.json
+.gemini/settings.json
+.cursor/settings.json
+
+# Virtual Environment & Python Caches
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Local proprietary wheels (never commit)
+wheels/
+
+# Licensed font files must be obtained separately by each authorized user
+.agents/skills/apply-nesdc-viz-template/assets/fonts/FCVision/*.otf
+.agents/skills/apply-nesdc-viz-template/assets/fonts/FCVision/*.ttf
+
+# Session folders — ad-hoc conversation outputs, not tracked
+session/*
+!session/.gitkeep
+
+# Large Datasets & Local Database Files
+*.db
+*.sqlite
+*.sqlite3
+*.xlsx
+*.csv
+*.zip
+
+# Compiled Executables
+bin/x13as.exe
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Editors and test artifacts
+.idea/
+.vscode/
+.coverage
+htmlcov/
+.pytest_cache/

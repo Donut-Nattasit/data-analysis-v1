@@ -1,0 +1,8 @@
+---
+description: Canonical project guidance for the data-analysis workspace
+alwaysApply: true
+---
+
+Read and follow @AGENTS.md as the canonical repository instructions. Read
+@SETUP.md before installing or configuring the project. Reusable skills live in
+`.agents/skills/` and role playbooks live in `.agents/roles/`.

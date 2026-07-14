@@ -1,0 +1,5 @@
+--find-links wheels/
+
+# Optional proprietary dependency. Obtain the wheel through an authorized CEIC
+# account and place it in wheels/ before installing this file.
+ceic-api-client==2.11.5.396

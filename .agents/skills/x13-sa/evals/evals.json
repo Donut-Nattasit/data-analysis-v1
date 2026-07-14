@@ -1,0 +1,23 @@
+{
+  "skill_name": "x13-sa",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Seasonally adjust this monthly CPI series using X-13.",
+      "expected_output": "Skill fires; runs X-13ARIMA-SEATS via the locally installed x13as.exe and writes a seasonally-adjusted CSV.",
+      "files": [],
+      "assertions": [
+        { "name": "Applies X13 seasonal adjustment on explicit request", "description": "Passes criteria", "type": "qualitative" }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Seasonally adjust this series that only has 18 months of monthly data.",
+      "expected_output": "Skill reports a clear prerequisite error (needs at least 3 years / 36 periods) rather than silently producing bad output or a raw traceback.",
+      "files": [],
+      "assertions": [
+        { "name": "Validates minimum history length before running X13", "description": "Passes criteria", "type": "qualitative" }
+      ]
+    }
+  ]
+}
